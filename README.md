@@ -47,3 +47,6 @@ La documentation technique (jsdoc) est générée dans `public/docs` et accessib
 - [Démo en ligne](https://heksaeder.github.io/ci-cd-ynov)
 - [Package npm](https://www.npmjs.com/package/ci-cd-ynov-ckurtaran)
 - [Rapport de couverture Codecov](https://app.codecov.io/gh/heksaeder/ci-cd-ynov)
+
+## Test de versioning
+Juste pour voir si rien ne change.
