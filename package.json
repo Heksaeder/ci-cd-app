@@ -1,7 +1,7 @@
 {
   "name": "ci-cd-ynov-ckurtaran",
   "version": "0.1.0",
-  "homepage": "https://heksaeder.github.io/ci-cd-ynov",
+  "homepage": "https://heksaeder.github.io/ci-cd-app",
   "overrides": {
     "yaml": "^2.4.2"
   },
