@@ -1,14 +1,65 @@
 {
-  "homepage": "https://<username>.github.io/ci-cd-ynov",
+  "name": "ci-cd-ynov-ckurtaran",
+  "version": "0.1.0",
+  "homepage": "https://heksaeder.github.io/ci-cd-ynov",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^13.5.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
   "scripts": {
-    "test": "react-scripts test --coverage --watchAll=false --collectCoverageFrom=src/**/*.js --collectCoverageFrom=!src/index.js --collectCoverageFrom=!src/reportWebVitals.js",
+    "start": "react-scripts start",
     "build": "react-scripts build",
+    "test": "react-scripts test --coverage --watchAll=false --collectCoverageFrom=src/**/*.js --collectCoverageFrom=!src/index.js --collectCoverageFrom=!src/reportWebVitals.js",
+    "eject": "react-scripts eject",
     "jsdoc": "jsdoc -R ./README.md -c ./jsdoc.config.json -r -d ./public/docs src",
-    "build-npm-ci": "NODE_ENV=production && rm -rf dist && mkdir dist && npx babel src --out-dir dist --copy-files"
+    "build-npm-ci": "cross-env NODE_ENV=production rimraf dist && mkdir dist && npx babel src --out-dir dist --copy-files && node scripts/clean-dist.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.29.7",
+    "@babel/core": "^7.29.7",
+    "@babel/plugin-transform-react-jsx": "^7.29.7",
+    "@babel/preset-react": "^7.29.7",
+    "cross-env": "^10.1.0",
+    "gh-pages": "^6.3.0",
+    "jsdoc": "^4.0.5",
+    "rimraf": "^6.1.3"
   },
   "jest": {
     "coverageThreshold": {
-      "global": { "branches": 100, "functions": 100, "lines": 100, "statements": 100 }
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
     }
   }
 }

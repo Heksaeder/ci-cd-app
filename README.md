@@ -1,70 +1,49 @@
-# Getting Started with Create React App
+# Inscription Form - CI/CD Ynov
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Application React permettant à un utilisateur de s'enregistrer via un formulaire avec validation complète des champs (nom, prénom, email, date de naissance, ville, code postal).
 
-## Available Scripts
+## Prérequis
 
-In the project directory, you can run:
+- Node.js 20.x ou supérieur
+- npm
 
-### `npm start`
+## Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+git clone https://github.com/heksaeder/ci-cd-ynov.git
+cd ci-cd-ynov
+npm install
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Lancer l'application
 
-### `npm test`
+```bash
+npm start
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Ouvre [http://localhost:3000](http://localhost:3000) dans le navigateur.
 
-### `npm run build`
+## Lancer les tests
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm test
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Génère un rapport de couverture (100% attendu sur les composants et utils, hors `index.js` et `reportWebVitals.js`).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Règles de validation
 
-### `npm run eject`
+- **Nom / Prénom / Ville** : lettres, accents, tirets et apostrophes acceptés ; chiffres et caractères spéciaux refusés.
+- **Email** : format standard `xxx@xxx.xxx`.
+- **Date de naissance** : l'utilisateur doit avoir 18 ans ou plus.
+- **Code postal** : format français (5 chiffres).
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Documentation
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+La documentation technique (jsdoc) est générée dans `public/docs` et accessible depuis l'application via le lien "Documentation" en bas de page.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Liens
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- [Démo en ligne](https://heksaeder.github.io/ci-cd-ynov)
+- [Package npm](https://www.npmjs.com/package/ci-cd-ynov-ckurtaran)
+- [Rapport de couverture Codecov](https://app.codecov.io/gh/heksaeder/ci-cd-ynov)
