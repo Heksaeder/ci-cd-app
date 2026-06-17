@@ -4,10 +4,13 @@ import { isAdult, isValidPostalCode, isValidName, isValidEmail } from '../utils/
 
 const initialState = { lastName: '', firstName: '', email: '', birthDate: '', city: '', postalCode: '' };
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 export default function RegisterForm() {
     const [form, setForm] = useState(initialState);
     const [errors, setErrors] = useState({});
     const [toast, setToast] = useState({ visible: false, type: '', message: '' });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -26,19 +29,42 @@ export default function RegisterForm() {
         return newErrors;
     };
 
-    const handleSubmit = (e) => {
+    const showToast = (type, message) => {
+        setToast({ visible: true, type, message });
+        setTimeout(() => setToast({ visible: false, type: '', message: '' }), 3000);
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const newErrors = validate();
-        if (Object.keys(newErrors).length === 0) {
-            localStorage.setItem('user', JSON.stringify(form));
-            setToast({ visible: true, type: 'success', message: 'Enregistrement réussi !' });
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            showToast('error', 'Erreur dans le formulaire');
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const response = await fetch(`${API_URL}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(form),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.detail || 'Erreur serveur');
+            }
+
             setErrors({});
             setForm(initialState);
-        } else {
-            setErrors(newErrors);
-            setToast({ visible: true, type: 'error', message: 'Erreur dans le formulaire' });
+            showToast('success', 'Enregistrement réussi !');
+        } catch (err) {
+            showToast('error', `Échec de l'enregistrement : ${err.message}`);
+        } finally {
+            setIsSubmitting(false);
         }
-        setTimeout(() => setToast({ visible: false, type: '', message: '' }), 3000);
     };
 
     return (
@@ -69,7 +95,9 @@ export default function RegisterForm() {
             <input id="postalCode" name="postalCode" value={form.postalCode} onChange={handleChange} />
             {errors.postalCode && <p style={{ color: 'red' }}>{errors.postalCode}</p>}
 
-            <button type="submit" disabled={!isFormFilled}>Sauvegarder</button>
+            <button type="submit" disabled={!isFormFilled || isSubmitting}>
+                {isSubmitting ? 'Envoi...' : 'Sauvegarder'}
+            </button>
         </form>
     );
 }

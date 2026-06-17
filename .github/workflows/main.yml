@@ -39,6 +39,19 @@ jobs:
           path: build
           if-no-files-found: error
 
+  docker_build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate docker compose config
+        run: docker compose config
+      - name: Build all Docker images
+        env:
+          MYSQL_ROOT_PASSWORD: ci_placeholder
+          MYSQL_DATABASE: ci_cd_ynov
+          MYSQL_USER: ci_placeholder
+        run: docker compose build
+
   deploy:
     needs: build_test
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'

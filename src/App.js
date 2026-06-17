@@ -1,8 +1,9 @@
 import RegisterForm from './components/RegisterForm';
+import './App.css';
 
 function App() {
     return (
-        <div>
+        <div className="App">
             <h1>Inscription</h1>
             <RegisterForm />
             <footer>
