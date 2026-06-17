@@ -1,6 +1,6 @@
 import os
 
-import mysql.connector
+import psycopg2
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -25,11 +25,16 @@ class RegisterPayload(BaseModel):
 
 
 def get_db_connection():
-    return mysql.connector.connect(
-        host=os.getenv("MYSQL_HOST", "db"),
-        user=os.getenv("MYSQL_USER", "root"),
-        password=os.getenv("MYSQL_ROOT_PASSWORD"),
-        database=os.getenv("MYSQL_DATABASE"),
+    database_url = os.getenv("DATABASE_URL")
+    if database_url:
+        # Format fourni par Render pour sa base PostgreSQL managée
+        return psycopg2.connect(database_url)
+    return psycopg2.connect(
+        host=os.getenv("POSTGRES_HOST", "db"),
+        port=os.getenv("POSTGRES_PORT", "5432"),
+        user=os.getenv("POSTGRES_USER", "pgck"),
+        password=os.getenv("POSTGRES_PASSWORD"),
+        dbname=os.getenv("POSTGRES_DATABASE"),
     )
 
 
@@ -61,7 +66,7 @@ def register_user(payload: RegisterPayload):
         cursor.close()
         conn.close()
         return {"status": "success", "message": "Utilisateur enregistré"}
-    except mysql.connector.Error as err:
+    except psycopg2.Error as err:
         raise HTTPException(status_code=500, detail=str(err))
 
 
@@ -71,5 +76,11 @@ def check_db():
         conn = get_db_connection()
         conn.close()
         return {"status": "ok", "database": "connected"}
-    except mysql.connector.Error as err:
+    except psycopg2.Error as err:
         raise HTTPException(status_code=500, detail=str(err))
+
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)

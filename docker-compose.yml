@@ -1,16 +1,16 @@
 services:
   db:
-    image: mysql:9.7
+    image: postgres:16-alpine
     environment:
-      - MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB=${POSTGRES_DATABASE}
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
       - ./sqlfiles/:/docker-entrypoint-initdb.d/
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD-SHELL", "pg_isready -U pgck"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -39,10 +39,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - MYSQL_HOST=db
-      - MYSQL_DATABASE
-      - MYSQL_USER
-      - MYSQL_ROOT_PASSWORD
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=pgck
+      - POSTGRES_PASSWORD
+      - POSTGRES_DATABASE
     depends_on:
       db:
         condition: service_healthy
@@ -70,4 +71,4 @@ services:
       - server
 
 volumes:
-  mysql_data:
+  postgres_data:
