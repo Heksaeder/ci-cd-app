@@ -23,6 +23,8 @@ jobs:
       - name: Generate jsdoc
         run: npm run jsdoc
       - name: build and test
+        env:
+          REACT_APP_API_URL: https://ci-cd-app-6y49.onrender.com
         run: |
           npm run build --if-present
           npm test
@@ -47,9 +49,8 @@ jobs:
         run: docker compose config
       - name: Build all Docker images
         env:
-          MYSQL_ROOT_PASSWORD: ci_placeholder
-          MYSQL_DATABASE: ci_cd_ynov
-          MYSQL_USER: ci_placeholder
+          POSTGRES_PASSWORD: ci_placeholder
+          POSTGRES_DATABASE: ci_cd_ynov
         run: docker compose build
 
   deploy:
