@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import RegisterForm from './RegisterForm';
 
 const fillValid = () => {
@@ -10,7 +10,14 @@ const fillValid = () => {
     fireEvent.change(screen.getByLabelText(/postal/), { target: { value: '75000' } });
 };
 
-beforeEach(() => localStorage.clear());
+beforeEach(() => {
+    localStorage.clear();
+    global.fetch = jest.fn();
+});
+
+afterEach(() => {
+    jest.restoreAllMocks();
+});
 
 test('le bouton est désactivé si les champs ne sont pas tous remplis', () => {
     render(<RegisterForm />);
@@ -23,14 +30,73 @@ test('le bouton devient actif quand tous les champs sont remplis', () => {
     expect(screen.getByRole('button', { name: /Sauvegarder/ })).not.toBeDisabled();
 });
 
-test('sauvegarde en local storage, toast succès et champs vidés', async () => {
+test('sauvegarde via l\'API, toast succès et champs vidés', async () => {
+    global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ status: 'success' }),
+    });
+
     render(<RegisterForm />);
     fillValid();
     fireEvent.click(screen.getByRole('button', { name: /Sauvegarder/ }));
 
     expect(await screen.findByTestId('toast')).toHaveTextContent('Enregistrement réussi');
-    expect(JSON.parse(localStorage.getItem('user')).lastName).toBe('Dupont');
+    expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/register'),
+        expect.objectContaining({ method: 'POST' })
+    );
     expect(screen.getByLabelText(/^Nom$/).value).toBe('');
+});
+
+test('affiche un toast erreur si l\'API échoue', async () => {
+    global.fetch.mockRejectedValueOnce(new Error('Network request failed'));
+
+    render(<RegisterForm />);
+    fillValid();
+    fireEvent.click(screen.getByRole('button', { name: /Sauvegarder/ }));
+
+    expect(await screen.findByTestId('toast')).toHaveTextContent(/Échec de l'enregistrement/);
+});
+
+test('affiche un toast erreur si l\'API renvoie une erreur serveur', async () => {
+    global.fetch.mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({ detail: 'Email déjà utilisé' }),
+    });
+
+    render(<RegisterForm />);
+    fillValid();
+    fireEvent.click(screen.getByRole('button', { name: /Sauvegarder/ }));
+
+    expect(await screen.findByTestId('toast')).toHaveTextContent(/Email déjà utilisé/);
+});
+
+test('affiche "Erreur serveur" si la réponse d\'erreur n\'a pas de detail', async () => {
+    global.fetch.mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({}),
+    });
+
+    render(<RegisterForm />);
+    fillValid();
+    fireEvent.click(screen.getByRole('button', { name: /Sauvegarder/ }));
+
+    expect(await screen.findByTestId('toast')).toHaveTextContent(/Erreur serveur/);
+});
+
+test('affiche "Erreur serveur" si la réponse d\'erreur n\'est pas un JSON valide', async () => {
+    global.fetch.mockResolvedValueOnce({
+        ok: false,
+        json: async () => {
+            throw new Error('invalid json');
+        },
+    });
+
+    render(<RegisterForm />);
+    fillValid();
+    fireEvent.click(screen.getByRole('button', { name: /Sauvegarder/ }));
+
+    expect(await screen.findByTestId('toast')).toHaveTextContent(/Erreur serveur/);
 });
 
 test('affiche un toast erreur et les messages en rouge si invalide', async () => {
@@ -42,6 +108,7 @@ test('affiche un toast erreur et les messages en rouge si invalide', async () =>
     expect(await screen.findByTestId('toast')).toHaveTextContent('Erreur');
     const error = screen.getByText(/Code postal invalide/);
     expect(error).toHaveStyle('color: red');
+    expect(global.fetch).not.toHaveBeenCalled();
 });
 
 test('refuse un mineur', () => {
@@ -101,6 +168,11 @@ test('affiche une erreur sur la ville invalide', async () => {
 });
 
 test('le toast disparaît après le délai', async () => {
+    global.fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ status: 'success' }),
+    });
+
     jest.useFakeTimers({ advanceTimers: true });
     render(<RegisterForm />);
     fillValid();
@@ -108,7 +180,9 @@ test('le toast disparaît après le délai', async () => {
 
     expect(await screen.findByTestId('toast')).toBeInTheDocument();
 
-    jest.advanceTimersByTime(3000);
+    act(() => {
+        jest.advanceTimersByTime(3000);
+    });
 
     await waitFor(() => {
         expect(screen.queryByTestId('toast')).not.toBeInTheDocument();
