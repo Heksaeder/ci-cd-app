@@ -64,7 +64,7 @@ jobs:
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 120
           browser: chrome
-          spec: cypress/e2e/mocked/**/*.cy.js
+          spec: cypress/e2e/!(Registration).cy.js
 
   cypress_online_offline:
     runs-on: ubuntu-latest

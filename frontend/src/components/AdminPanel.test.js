@@ -101,3 +101,59 @@ test('appelle onLogout au clic sur le bouton de déconnexion', async () => {
 
     expect(onLogout).toHaveBeenCalled();
 });
+
+test('ne déconnecte pas si le composant est démonté avant la réponse 401', async () => {
+    let resolveFetch;
+    global.fetch.mockReturnValueOnce(
+        new Promise((resolve) => {
+            resolveFetch = resolve;
+        })
+    );
+    const onLogout = jest.fn();
+
+    const { unmount } = render(<AdminPanel token="expired-token" onLogout={onLogout} />);
+    unmount();
+
+    resolveFetch({ ok: false, status: 401 });
+
+    await waitFor(() => {
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+    expect(onLogout).not.toHaveBeenCalled();
+});
+
+test('ne met pas à jour le state si le composant est démonté avant une réponse réussie', async () => {
+    let resolveFetch;
+    global.fetch.mockReturnValueOnce(
+        new Promise((resolve) => {
+            resolveFetch = resolve;
+        })
+    );
+
+    const { unmount } = render(<AdminPanel token="fake-token" onLogout={jest.fn()} />);
+    unmount();
+
+    resolveFetch({ ok: true, json: async () => mockUsers });
+
+    await waitFor(() => {
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+});
+
+test('ne met pas à jour le state si le composant est démonté avant une erreur', async () => {
+    let rejectFetch;
+    global.fetch.mockReturnValueOnce(
+        new Promise((_, reject) => {
+            rejectFetch = reject;
+        })
+    );
+
+    const { unmount } = render(<AdminPanel token="fake-token" onLogout={jest.fn()} />);
+    unmount();
+
+    rejectFetch(new Error('Erreur après démontage'));
+
+    await waitFor(() => {
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+});
