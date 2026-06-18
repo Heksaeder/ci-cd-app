@@ -110,6 +110,10 @@ jobs:
       - name: Wait for backend to be ready
         run: npx --yes wait-on http://localhost:8000/health/db --timeout 120000
 
+      - name: Show logs if backend failed to start
+        if: failure()
+        run: docker compose logs server db
+
       - name: Test infra
         run: |
           curl -fsS http://localhost:8000/health/db
@@ -128,7 +132,7 @@ jobs:
 
       - name: Tear down stack
         if: always()
-        run: docker compose down -v
+        run: docker compose down -v --remove-orphans
 
   docker_build:
     runs-on: ubuntu-latest
