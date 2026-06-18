@@ -98,17 +98,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Create .env for docker compose
+        run: |
+          cat <<EOF > .env
+          POSTGRES_PASSWORD=ci_placeholder
+          POSTGRES_DATABASE=ci_cd_ynov
+          ADMIN_EMAIL=ci_placeholder@example.com
+          ADMIN_PASSWORD=ci_placeholder_password
+          JWT_SECRET=ci_placeholder_secret
+          EOF
+
       - name: docker compose up -d
-        env:
-          POSTGRES_PASSWORD: ci_placeholder
-          POSTGRES_DATABASE: ci_cd_ynov
-          ADMIN_EMAIL: ci_placeholder@example.com
-          ADMIN_PASSWORD: ci_placeholder_password
-          JWT_SECRET: ci_placeholder_secret
         run: docker compose up -d --build
 
       - name: Wait for backend to be ready
-        run: npx --yes wait-on http://localhost:8000/health/db --timeout 120000
+        run: npx --yes wait-on --httpTimeout 5000 -v "http-get://localhost:8000/health/db" --timeout 120000
 
       - name: Show logs if backend failed to start
         if: failure()
