@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Redirection...</title>
+  <script type="text/javascript">
+    // Technique standard pour faire fonctionner une SPA sur GitHub Pages.
+    // GitHub Pages sert ce fichier pour toute route inconnue (ex: /ci-cd-app/admin).
+    // On encode le chemin demandé dans le paramètre "p", puis on redirige vers
+    // la racine de l'app où index.html charge React, qui décode "p" et restitue
+    // l'URL d'origine via window.history.replaceState (voir index.html).
+    var pathSegmentsToKeep = 1; // nombre de segments du chemin de base (ici : "ci-cd-app")
+    var l = window.location;
+
+    l.replace(
+            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+            l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?p=/' +
+            l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+            (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash
+    );
+  </script>
+</head>
+<body></body>
+</html>
