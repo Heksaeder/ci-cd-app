@@ -2,15 +2,18 @@
 
 # dependencies
 /node_modules
+frontend/node_modules
 /.pnp
 .pnp.js
 
 # testing
 /coverage
+frontend/coverage
 
 # production
 /build
 /dist
+frontend/build
 frontend/public/docs/
 
 # misc
@@ -27,3 +30,7 @@ yarn-error.log*
 
 __pycache__/
 *.pyc
+
+# cypress
+frontend/cypress/screenshots/
+frontend/cypress/videos/

@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import Toast from './Toast';
 import { isAdult, isValidPostalCode, isValidName, isValidEmail } from '../utils/validators';
+import { API_URL } from '../api';
 
 const initialState = { lastName: '', firstName: '', email: '', birthDate: '', city: '', postalCode: '' };
-
-// istanbul ignore next -- valeur d'environnement résolue au build, hors logique applicative testable
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 export default function RegisterForm() {
     const [form, setForm] = useState(initialState);

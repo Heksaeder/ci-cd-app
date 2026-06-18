@@ -1,0 +1,1 @@
+// Fichier de support global Cypress, chargé avant chaque fichier de test.
