@@ -24,7 +24,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --coverage --watchAll=false --collectCoverageFrom=src/**/*.js --collectCoverageFrom=!src/index.js --collectCoverageFrom=!src/reportWebVitals.js",
     "eject": "react-scripts eject",
-    "jsdoc": "jsdoc -R ./README.md -c ./jsdoc.config.json -r -d ./public/docs src",
+    "jsdoc": "jsdoc -R ../README.md -c ./jsdoc.config.json -r -d ./public/docs src",
     "build-npm-ci": "cross-env NODE_ENV=production rimraf dist && mkdir dist && npx babel src --out-dir dist --copy-files && node scripts/clean-dist.js"
   },
   "eslintConfig": {
