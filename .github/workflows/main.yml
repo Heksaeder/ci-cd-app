@@ -89,7 +89,7 @@ jobs:
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 120
           browser: chrome
-          spec: cypress/e2e/registration-online-offline.cy.js
+          spec: cypress/e2e/Registration.cy.js
         env:
           CYPRESS_offline: ${{ matrix.offline }}
 
